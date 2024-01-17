@@ -54,10 +54,10 @@ export default function Board(props) {
         // eslint-disable-next-line
     }, [boardState]);
 
-    const getFEN = () => {
+    const getFEN = (bdState) => {
         let fen = "";
         let emptyCount = 0;
-        for (let i = 0; i < boardState.length; i++) {
+        for (let i = 0; i < bdState.length; i++) {
             if (i % 8 === 0 && i !== 0) {
                 if (emptyCount !== 0) {
                     fen += emptyCount.toString();
@@ -65,14 +65,14 @@ export default function Board(props) {
                 }
                 fen += "/";
             }
-            if (boardState[i] === " ") {
+            if (bdState[i] === " ") {
                 emptyCount++;
             } else {
                 if (emptyCount !== 0) {
                     fen += emptyCount.toString();
                     emptyCount = 0;
                 }
-                fen += boardState[i];
+                fen += bdState[i];
             }
         }
         return fen;
@@ -298,12 +298,10 @@ export default function Board(props) {
                 moves.push([blkSquares[i], blkMovesFromSq[j]]);
             }
         }
-        console.log(moves);
+        return moves;
     }
 
-    //random as of now
-    const makeBlackMove = () => {
-        findAllBlackMoves();
+    const makeRandomBlackMove = () => {
         let madeMove = false;
         let checkedPieces = [];
         while (!madeMove) {
@@ -324,6 +322,15 @@ export default function Board(props) {
                     madeMove = true;
                 }
             }
+        }
+    }
+
+    const makeBlackMove = () => {
+        let moves = findAllBlackMoves();
+        let evals = [];
+        for (let i = 0; i < moves.length; i++) {
+            let tryMoveState = [...boardState];
+
         }
     }
 
