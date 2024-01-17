@@ -78,25 +78,25 @@ export default function Board(props) {
         return fen;
     }
 
-    const test = () => {
-        fetch('http://localhost:5000/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                'fen': getFEN()
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
+    const predict = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'fen': getFEN(boardState)
+                }),
+            });
+            const data = await response.json();
             console.log('Prediction:', data.prediction[0][0]);
-        })
-        .catch((error) => {
+            return data.prediction[0][0];
+        } catch (error) {
             console.error('Error:', error);
-        });
-
-    }
+            return 999;
+        }
+    };
     
     const strToPng = (s) => {
         return pngMap[s];
@@ -301,6 +301,7 @@ export default function Board(props) {
         return moves;
     }
 
+    // eslint-disable-next-line
     const makeRandomBlackMove = () => {
         let madeMove = false;
         let checkedPieces = [];
@@ -325,13 +326,21 @@ export default function Board(props) {
         }
     }
 
-    const makeBlackMove = () => {
+    const makeBlackMove = async () => {
         let moves = findAllBlackMoves();
         let evals = [];
         for (let i = 0; i < moves.length; i++) {
             let tryMoveState = [...boardState];
-
+            let origin = moves[i][0];
+            let target = moves[i][1];
+            tryMoveState[target - 1] = tryMoveState[origin - 1];
+            tryMoveState[origin - 1] = " ";
+            console.log(getFEN(tryMoveState));
+            let evaluation = await predict(getFEN(tryMoveState));
+            evals.push(evaluation);
         }
+        console.log(evals);
+        makeRandomBlackMove();
     }
 
     const squareClicked = (id) => {
