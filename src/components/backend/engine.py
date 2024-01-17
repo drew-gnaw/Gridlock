@@ -2,11 +2,13 @@ import numpy as np
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from tensorflow import keras
+import joblib
 
 app = Flask(__name__)
 CORS(app)
 
-model = keras.models.load_model("/Users/andrew/Repositories/chess/src/components/backend/model")
+#model = keras.models.load_model('./forest_model')
+model = joblib.load('/Users/andrew/Repositories/chess/src/components/backend/forest_model.joblib')
 
 @cross_origin(supports_credentials=True)
 @app.route('/predict', methods=['POST'])
@@ -34,11 +36,11 @@ def FENtoVEC (FEN):
     print(VEC)
     return VEC
 
-fen_vec = [FENtoVEC("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")]
+fen_vec = [FENtoVEC("rn2r3/pppk1pp1/3p3p/8/3N4/2P5/P1P2PPP/R2K3R w - - 2 16")]
 
 # Ensure the input is in the correct format
 fen_vec = np.asarray(fen_vec)
 
 print(fen_vec)
 # Make a prediction
-print(model.predict(fen_vec)[0][0] * 10)
+print(model.predict(fen_vec)[0] * 10)
