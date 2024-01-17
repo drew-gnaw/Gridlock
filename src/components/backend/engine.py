@@ -6,7 +6,7 @@ from tensorflow import keras
 app = Flask(__name__)
 CORS(app)
 
-model = keras.models.load_model("./model")
+model = keras.models.load_model("/Users/andrew/Repositories/chess/src/components/backend/model")
 
 @cross_origin(supports_credentials=True)
 @app.route('/predict', methods=['POST'])
@@ -15,7 +15,6 @@ def predict():
     fen_vec = FENtoVEC(fen)
     # Ensure the input is in the correct format
     fen_vec = np.expand_dims(fen_vec, axis=0)
-
     # Make a prediction
     prediction = model.predict([fen_vec])
     
@@ -32,5 +31,14 @@ def FENtoVEC (FEN):
             VEC.append(pieces[FEN[i]])
         else:
             em = [VEC.append(0) for i in range(int(FEN[i]))]
-
+    print(VEC)
     return VEC
+
+fen_vec = [FENtoVEC("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")]
+
+# Ensure the input is in the correct format
+fen_vec = np.asarray(fen_vec)
+
+print(fen_vec)
+# Make a prediction
+print(model.predict(fen_vec)[0][0] * 10)
