@@ -286,8 +286,24 @@ export default function Board(props) {
         }
     }
 
+    const findAllBlackMoves = () => {
+        let blkSquares = [];
+        for (let i = 1; i <= 64; i++) {
+            if (containsColorPiece(i, false)) blkSquares.push(i);
+        }
+        let moves = []; // array of moves, where each move is a 2-long array (origin and target)
+        for (let i = 0; i < blkSquares.length; i++) {
+            let blkMovesFromSq = getMoves(blkSquares[i], false, false);
+            for (let j = 0; j < blkMovesFromSq.length; j++) {
+                moves.push([blkSquares[i], blkMovesFromSq[j]]);
+            }
+        }
+        console.log(moves);
+    }
+
     //random as of now
     const makeBlackMove = () => {
+        findAllBlackMoves();
         let madeMove = false;
         let checkedPieces = [];
         while (!madeMove) {
@@ -363,9 +379,6 @@ export default function Board(props) {
         setMoved(true);
         setValidSelection(false);
     }
-
-    console.log(getFEN());
-    console.log(test());
 
     return (
         <div>
