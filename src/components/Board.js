@@ -85,12 +85,12 @@ export default function Board(props) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'fen': "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
+                'fen': getFEN()
             }),
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Prediction:', data.prediction);
+            console.log('Prediction:', data.prediction[0][0]);
         })
         .catch((error) => {
             console.error('Error:', error);
