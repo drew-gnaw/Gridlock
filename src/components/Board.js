@@ -85,7 +85,7 @@ export default function Board(props) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                'fen': "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+                'fen': "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1"
             }),
         })
         .then(response => response.json())
