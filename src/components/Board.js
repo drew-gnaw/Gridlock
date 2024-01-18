@@ -295,12 +295,19 @@ export default function Board(props) {
         for (let i = 0; i < blkSquares.length; i++) {
             let blkMovesFromSq = getMoves(blkSquares[i], false, false);
             for (let j = 0; j < blkMovesFromSq.length; j++) {
-                moves.push([blkSquares[i], blkMovesFromSq[j]]);
+                let tryMoveState = [...boardState];
+                tryMoveState[blkMovesFromSq[j] - 1] = tryMoveState[blkSquares[i] - 1];
+                tryMoveState[blkSquares[i] - 1] = " ";
+                if (!inCheck(tryMoveState, false)) {
+                    console.log("Black moves from: " + blkSquares[i] + " to " + blkMovesFromSq[j]);
+                    console.log(tryMoveState);
+                    moves.push([blkSquares[i], blkMovesFromSq[j]]);
+                }
             }
         }
         return moves;
     }
-
+    
     // eslint-disable-next-line
     const makeRandomBlackMove = () => {
         let madeMove = false;
