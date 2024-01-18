@@ -45,6 +45,7 @@ export default function Board(props) {
     const [highlightedSquares, setHighlightedSquares] = useState([]); // contains all highlighted (moveable to) squares
     const [validSelection, setValidSelection] = useState(false); // true if a piece of the player's color is selected
     const [moved, setMoved] = useState(false);
+    const [whiteCanPlay, setWhiteCanPlay] = useState(true);
 
     useEffect(() => {
         if (moved) {
@@ -361,43 +362,46 @@ export default function Board(props) {
         let bestMoveIndex = findMin(evals);
         let bestMove = moves[bestMoveIndex];
         blackPerformMove(bestMove[0], bestMove[1]);
+        setWhiteCanPlay(true);
     }
 
     const squareClicked = (id) => {
-        setMoved(false);
-        setSelectedSquare(prevSelectedSquare => {
+        if (whiteCanPlay) {
+            setMoved(false);
+            setSelectedSquare(prevSelectedSquare => {
 
-            // if we select the selected square, deselect
-            if (prevSelectedSquare === id) {
-                setValidSelection(false);
-                setHighlightedSquares([]);
-                return 0;
-            
-            // if we select a white piece, we can get ready for a move
-            } else if (containsColorPiece(id, true)) {
-                setValidSelection(true);
-                let moves = getMoves(id, true, false);
-                for (let i = 0; i < moves.length; i++) {
-                    let newBoardState = [...boardState];
-                    newBoardState[moves[i] - 1] = newBoardState[id - 1];
-                    newBoardState[id - 1] = " ";
-                    if (inCheck(newBoardState, true)) {
-                        moves.splice(i, 1);
-                        i--;
-                    }
-                }
-                setHighlightedSquares(moves);
-                return id;
-
-            } else {
-                if (validSelection && highlightedSquares.includes(id)) {
-                    performMove(prevSelectedSquare, id);
+                // if we select the selected square, deselect
+                if (prevSelectedSquare === id) {
                     setValidSelection(false);
+                    setHighlightedSquares([]);
+                    return 0;
+                
+                // if we select a white piece, we can get ready for a move
+                } else if (containsColorPiece(id, true)) {
+                    setValidSelection(true);
+                    let moves = getMoves(id, true, false);
+                    for (let i = 0; i < moves.length; i++) {
+                        let newBoardState = [...boardState];
+                        newBoardState[moves[i] - 1] = newBoardState[id - 1];
+                        newBoardState[id - 1] = " ";
+                        if (inCheck(newBoardState, true)) {
+                            moves.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    setHighlightedSquares(moves);
+                    return id;
+
+                } else {
+                    if (validSelection && highlightedSquares.includes(id)) {
+                        performMove(prevSelectedSquare, id);
+                        setValidSelection(false);
+                    }
+                    setHighlightedSquares([]);
+                    return 0;
                 }
-                setHighlightedSquares([]);
-                return 0;
-            }
-        }); 
+            });
+        } 
     }
 
     const blackPerformMove = (sourceid, targetid) => {
@@ -413,6 +417,7 @@ export default function Board(props) {
         blackPerformMove(sourceid, targetid);
         setMoved(true);
         setValidSelection(false);
+        setWhiteCanPlay(false);
     }
 
     return (
