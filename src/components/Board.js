@@ -82,6 +82,9 @@ export default function Board(props) {
                 fen += bdState[i];
             }
         }
+        if (emptyCount !== 0) {
+            fen += emptyCount.toString();
+        }
         return fen;
     }
 
@@ -377,6 +380,7 @@ export default function Board(props) {
             let target = moves[i][1];
             tryMoveState[target - 1] = tryMoveState[origin - 1];
             tryMoveState[origin - 1] = " ";
+            console.log(getFEN(tryMoveState));
             let evaluation = await predict(getFEN(tryMoveState));
             evals.push(evaluation);
         }
@@ -431,7 +435,23 @@ export default function Board(props) {
             newBoardState[targetid - 1] = newBoardState[sourceid - 1];
             newBoardState[sourceid - 1] = " ";
             if (newBoardState[targetid - 1].toLowerCase() === 'k' && (Math.abs(getFile(targetid) - getFile(sourceid)) > 1)) {
-                console.log("a castle!")
+                if (targetid > sourceid) {
+                    if (sourceid > 32) { //WK
+                        newBoardState[63] = " ";
+                        newBoardState[61] = "R";
+                    } else {            // BK
+                        newBoardState[8] = " ";
+                        newBoardState[6] = "r";
+                    }
+                } else {
+                    if (sourceid > 32) { //WQ
+                        newBoardState[56] = " ";
+                        newBoardState[59] = "R";
+                    } else {             //BQ
+                        newBoardState[1] = " ";
+                        newBoardState[4] = "r";
+                    }
+                }
             }
             return newBoardState;
         });
