@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 #model = keras.models.load_model('./forest_model')
-model = joblib.load('/Users/andrew/Repositories/chess/src/components/backend/forest_model.joblib')
+model = keras.models.load_model('/Users/andrew/Repositories/chess/src/components/backend/model')
 
 @cross_origin(supports_credentials=True)
 @app.route('/predict', methods=['POST'])
@@ -16,10 +16,9 @@ def predict():
     fen = request.get_json()['fen']
     fen_vec = FENtoVEC(fen)
     # Ensure the input is in the correct format
-    fen_vec = np.expand_dims(fen_vec, axis=0)
+    fen_vec = np.expand_dims(fen_vec, axis=-1)  # Add an extra dimension
     # Make a prediction
     prediction = model.predict([fen_vec])
-    
     return {'prediction': prediction.tolist()}
 
 def FENtoVEC (FEN):
@@ -33,14 +32,10 @@ def FENtoVEC (FEN):
             VEC.append(pieces[FEN[i]])
         else:
             em = [VEC.append(0) for i in range(int(FEN[i]))]
-    print(VEC)
+    VEC = np.array(VEC).reshape(8, 8)  # Reshape the 1D array to 2D (8, 8)
     return VEC
 
-fen_vec = [FENtoVEC("rn2r3/pppk1pp1/3p3p/8/3N4/2P5/P1P2PPP/R2K3R w - - 2 16")]
-
-# Ensure the input is in the correct format
-fen_vec = np.asarray(fen_vec)
-
-print(fen_vec)
-# Make a prediction
-print(model.predict(fen_vec)[0] * 10)
+fen_vec = [FENtoVEC("rnbqkbnr/ppppp1pp/8/5p2/4P3/8/PPPP1PPP/RNBQKBNR")]
+fen_vec = np.expand_dims(fen_vec, axis=-1)
+prediction = model.predict([fen_vec])
+print(prediction)
