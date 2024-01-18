@@ -140,7 +140,6 @@ export default function Board(props) {
         for (let i = 0; i < oppSquares.length; i++) {
             possibleMoves = possibleMoves.concat(getMoves(oppSquares[i], !white, true));
         }
-        console.log(possibleMoves);
         for (let i = 0; i < possibleMoves.length; i++) {
             if (bdState[possibleMoves[i] - 1] === (white? 'K' : 'k')) return true;
         }
@@ -344,6 +343,10 @@ export default function Board(props) {
 
     const makeBlackMove = async () => {
         let moves = findAllBlackMoves();
+        if (moves.length === 0) {
+            console.log("its joever");
+            return;
+        }
         let evals = [];
         for (let i = 0; i < moves.length; i++) {
             let tryMoveState = [...boardState];
@@ -354,6 +357,7 @@ export default function Board(props) {
             let evaluation = await predict(getFEN(tryMoveState));
             evals.push(evaluation);
         }
+        console.log(evals);
         let bestMoveIndex = findMin(evals);
         let bestMove = moves[bestMoveIndex];
         blackPerformMove(bestMove[0], bestMove[1]);
@@ -372,7 +376,6 @@ export default function Board(props) {
             // if we select a white piece, we can get ready for a move
             } else if (containsColorPiece(id, true)) {
                 setValidSelection(true);
-                console.log(boardState[id - 1].toString().toLowerCase());
                 let moves = getMoves(id, true, false);
                 for (let i = 0; i < moves.length; i++) {
                     let newBoardState = [...boardState];

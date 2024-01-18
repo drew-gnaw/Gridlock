@@ -8,16 +8,16 @@ app = Flask(__name__)
 CORS(app)
 
 #model = keras.models.load_model('./forest_model')
-model = keras.models.load_model('./model')
+#model = keras.models.load_model('model')
+model = joblib.load("model.joblib")
 
-@cross_origin(supports_credentials=True)
+@cross_origin()
 @app.route('/predict', methods=['POST'])
 def predict():
     fen = request.get_json()['fen']
     fen_vec = FENtoVEC(fen)
-    # Ensure the input is in the correct format
-    fen_vec = np.expand_dims(fen_vec, axis=-1)  # Add an extra dimension
-    # Make a prediction
+    fen_vec = np.expand_dims(fen_vec, axis=0)
+    fen_vec = np.expand_dims(fen_vec, axis=-1)
     prediction = model.predict([fen_vec])
     return {'prediction': prediction.tolist()}
 
