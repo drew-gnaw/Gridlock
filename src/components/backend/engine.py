@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 #model = keras.models.load_model('./forest_model')
-model = keras.models.load_model('/Users/andrew/Repositories/chess/src/components/backend/model')
+model = keras.models.load_model('./model')
 
 @cross_origin(supports_credentials=True)
 @app.route('/predict', methods=['POST'])
