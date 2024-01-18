@@ -54,6 +54,7 @@ export default function Board(props) {
         // eslint-disable-next-line
     }, [boardState]);
 
+
     const getFEN = (bdState) => {
         let fen = "";
         let emptyCount = 0;
@@ -117,11 +118,11 @@ export default function Board(props) {
     }
 
     // if white is true, returns true IFF the square at id contains a white piece. if white is false, checks for black piece.
-    const containsColorPiece = (id, white) => {
+    const containsColorPiece = (id, white, bdState = boardState) => {
         if (white) {
-            return (checkCase(boardState[id - 1]) === 'Uppercase');
+            return (checkCase(bdState[id - 1]) === 'Uppercase');
         } else {
-            return (checkCase(boardState[id - 1]) === 'Lowercase');
+            return (checkCase(bdState[id - 1]) === 'Lowercase');
         }
     }
 
@@ -135,7 +136,7 @@ export default function Board(props) {
         let possibleMoves = [];
         let oppSquares = [];
         for (let i = 1; i <= 64; i++) {
-            if (containsColorPiece(i, !white)) oppSquares.push(i);
+            if (containsColorPiece(i, !white, bdState)) oppSquares.push(i);
         }
         for (let i = 0; i < oppSquares.length; i++) {
             possibleMoves = possibleMoves.concat(getMoves(oppSquares[i], !white, true));
@@ -357,7 +358,6 @@ export default function Board(props) {
             let evaluation = await predict(getFEN(tryMoveState));
             evals.push(evaluation);
         }
-        console.log(evals);
         let bestMoveIndex = findMin(evals);
         let bestMove = moves[bestMoveIndex];
         blackPerformMove(bestMove[0], bestMove[1]);
