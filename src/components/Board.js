@@ -78,7 +78,7 @@ export default function Board(props) {
         return fen;
     }
 
-    const predict = async () => {
+    const predict = async (FEN) => {
         try {
             const response = await fetch('http://localhost:5000/predict', {
                 method: 'POST',
@@ -86,11 +86,10 @@ export default function Board(props) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    'fen': getFEN(boardState)
+                    'fen': FEN
                 }),
             });
             const data = await response.json();
-            console.log('Prediction:', data.prediction[0][0]);
             return data.prediction[0][0];
         } catch (error) {
             console.error('Error:', error);
@@ -326,6 +325,23 @@ export default function Board(props) {
         }
     }
 
+    // finds the min of a list of integers, and returns the index of the min
+    const findMin = (list) => {
+        let min = 999;
+        for (let i = 0; i < list.length; i++) {
+            if (list[i] < min) {
+                min = list[i];
+            }
+        }
+        for (let i = 0; i < list.length; i++) {
+            if (list[i] === min) {
+                return i;
+            }
+        }
+        console.log("Error: no min found");
+        return null;
+    }
+
     const makeBlackMove = async () => {
         let moves = findAllBlackMoves();
         let evals = [];
@@ -335,12 +351,12 @@ export default function Board(props) {
             let target = moves[i][1];
             tryMoveState[target - 1] = tryMoveState[origin - 1];
             tryMoveState[origin - 1] = " ";
-            console.log(getFEN(tryMoveState));
             let evaluation = await predict(getFEN(tryMoveState));
             evals.push(evaluation);
         }
-        console.log(evals);
-        makeRandomBlackMove();
+        let bestMoveIndex = findMin(evals);
+        let bestMove = moves[bestMoveIndex];
+        blackPerformMove(bestMove[0], bestMove[1]);
     }
 
     const squareClicked = (id) => {
