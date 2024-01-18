@@ -45,7 +45,8 @@ export default function Board(props) {
     const [highlightedSquares, setHighlightedSquares] = useState([]); // contains all highlighted (moveable to) squares
     const [validSelection, setValidSelection] = useState(false); // true if a piece of the player's color is selected
     const [moved, setMoved] = useState(false);
-    const [whiteCanPlay, setWhiteCanPlay] = useState(true);
+    const [whiteCanPlay, setWhiteCanPlay] = useState(true); // async
+    const [castling, setCastling] = useState([true, true, true, true]); // WKingside, WQueenside, Bkingside, Bqueenside
 
     useEffect(() => {
         if (moved) {
@@ -54,6 +55,10 @@ export default function Board(props) {
         }
         // eslint-disable-next-line
     }, [boardState]);
+
+    const getFile = (id) => {
+        return (id % 8 === 0 ? 8 : id % 8);
+    }
 
 
     const getFEN = (bdState) => {
@@ -261,6 +266,17 @@ export default function Board(props) {
                 moves.push(target);
             }
         }
+
+        if (white) {
+            if (castling[0] && boardState[61] === " " && boardState[62] === " ") {
+                moves.push(63);
+            }
+            if (castling[1] && boardState[59] === " " && boardState[58]=== " " && boardState[57] === " ") {
+                moves.push(59);
+            }
+        } else {
+            //TODO
+        }
         return moves;
         
     }
@@ -299,8 +315,6 @@ export default function Board(props) {
                 tryMoveState[blkMovesFromSq[j] - 1] = tryMoveState[blkSquares[i] - 1];
                 tryMoveState[blkSquares[i] - 1] = " ";
                 if (!inCheck(tryMoveState, false)) {
-                    console.log("Black moves from: " + blkSquares[i] + " to " + blkMovesFromSq[j]);
-                    console.log(tryMoveState);
                     moves.push([blkSquares[i], blkMovesFromSq[j]]);
                 }
             }
@@ -413,9 +427,12 @@ export default function Board(props) {
 
     const blackPerformMove = (sourceid, targetid) => {
         setBoardState(prevBoardState => {
-            const newBoardState = [...prevBoardState];
+            let newBoardState = [...prevBoardState];
             newBoardState[targetid - 1] = newBoardState[sourceid - 1];
             newBoardState[sourceid - 1] = " ";
+            if (newBoardState[targetid - 1].toLowerCase() === 'k' && (Math.abs(getFile(targetid) - getFile(sourceid)) > 1)) {
+                console.log("a castle!")
+            }
             return newBoardState;
         });
     }
