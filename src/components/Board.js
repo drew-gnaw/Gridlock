@@ -434,25 +434,37 @@ export default function Board(props) {
             let newBoardState = [...prevBoardState];
             newBoardState[targetid - 1] = newBoardState[sourceid - 1];
             newBoardState[sourceid - 1] = " ";
-            if (newBoardState[targetid - 1].toLowerCase() === 'k' && (Math.abs(getFile(targetid) - getFile(sourceid)) > 1)) {
-                if (targetid > sourceid) {
-                    if (sourceid > 32) { //WK
-                        newBoardState[63] = " ";
-                        newBoardState[61] = "R";
-                    } else {            // BK
-                        newBoardState[8] = " ";
-                        newBoardState[6] = "r";
-                    }
-                } else {
-                    if (sourceid > 32) { //WQ
-                        newBoardState[56] = " ";
-                        newBoardState[59] = "R";
-                    } else {             //BQ
-                        newBoardState[1] = " ";
-                        newBoardState[4] = "r";
+            if (newBoardState[targetid - 1].toLowerCase() === 'k') {
+                if ((Math.abs(getFile(targetid) - getFile(sourceid)) > 1)) {
+                    if (targetid > sourceid) {
+                        if (sourceid > 32) { //WK
+                            newBoardState[63] = " ";
+                            newBoardState[61] = "R";
+                        } else {            // BK
+                            newBoardState[8] = " ";
+                            newBoardState[6] = "r";
+                        }
+                    } else {
+                        if (sourceid > 32) { //WQ
+                            newBoardState[56] = " ";
+                            newBoardState[59] = "R";
+                        } else {             //BQ
+                            newBoardState[1] = " ";
+                            newBoardState[4] = "r";
+                        }
                     }
                 }
+                if (newBoardState[targetid - 1] === 'K') {
+                    setCastling(prev => {
+                        return ([0, 0, prev[2], prev[3]]);
+                    })
+                } else {
+                    setCastling(prev => {
+                        return ([prev[0], prev[1], 0, 0]);
+                    })
+                }
             }
+            
             return newBoardState;
         });
     }
