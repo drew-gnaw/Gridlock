@@ -464,7 +464,29 @@ export default function Board(props) {
                     })
                 }
             }
-            
+            if (newBoardState[targetid - 1].toLowerCase() === 'r') {
+                if (newBoardState[targetid - 1] === 'R') {
+                    if (sourceid === 64) {
+                        setCastling(prev => {
+                            return ([0, prev[1], prev[2], prev[3]]);
+                        })
+                    } else if (sourceid === 57) {
+                        setCastling(prev => {
+                            return ([prev[0], 0, prev[2], prev[3]]);
+                        })
+                    }
+                } else {
+                    if (sourceid === 8) {
+                        setCastling(prev => {
+                            return ([prev[0], prev[1], 0, prev[3]]);
+                        })
+                    } else if (sourceid === 1) {
+                        setCastling(prev => {
+                            return ([prev[0], prev[1], prev[2], 0]);
+                        })
+                    }
+                }
+            }
             return newBoardState;
         });
     }
