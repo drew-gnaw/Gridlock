@@ -278,7 +278,12 @@ export default function Board(props) {
                 moves.push(59);
             }
         } else {
-            //TODO
+            if (castling[2] && boardState[6] === " " && boardState[7] === " ") {
+                moves.push(7);
+            }
+            if (castling[3] && boardState[2] === " " && boardState[3]=== " " && boardState[4] === " ") {
+                moves.push(3);
+            }
         }
         return moves;
         
