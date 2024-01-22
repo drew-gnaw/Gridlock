@@ -8,8 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 #model = keras.models.load_model('./forest_model')
-#model = keras.models.load_model('model')
-model = joblib.load("model.joblib")
+model = keras.models.load_model('/Users/andrew/Repositories/chess/src/components/backend/model')
 
 @cross_origin()
 @app.route('/predict', methods=['POST'])
@@ -35,7 +34,3 @@ def FENtoVEC (FEN):
     VEC = np.array(VEC).reshape(8, 8)  # Reshape the 1D array to 2D (8, 8)
     return VEC
 
-fen_vec = [FENtoVEC("rnbqkbnr/ppppp1pp/8/5p2/4P3/8/PPPP1PPP/RNBQKBNR")]
-fen_vec = np.expand_dims(fen_vec, axis=-1)
-prediction = model.predict([fen_vec])
-print(prediction)
