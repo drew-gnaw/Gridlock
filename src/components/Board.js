@@ -13,7 +13,6 @@ import npng from "../assets/Bn.png"
 import rpng from "../assets/Br.png"
 import ppng from "../assets/Bp.png"
 import transparent from "../assets/transparent.png"
-import { min } from "lodash";
 
 export default function Board(props) {
     const pngMap = {
@@ -397,6 +396,7 @@ export default function Board(props) {
         return null;
     }
 
+    // eslint-disable-next-line
     const makeBlackMoveML = async () => {
         let moves = findAllBlackMoves(boardState, false);
         if (moves.length === 0) {
@@ -443,7 +443,7 @@ export default function Board(props) {
             for (let j = 0; j < responses.length; j++) {
                 let originR = responses[j][0];
                 let targetR = responses[j][1];
-                let tryResponseState = [... tryMoveState];
+                let tryResponseState = [...tryMoveState];
                 tryResponseState[targetR - 1] = tryResponseState[originR - 1];
                 tryResponseState[originR - 1] = " ";
                 let matEval = evalMaterial(tryResponseState);
