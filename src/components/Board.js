@@ -452,16 +452,26 @@ export default function Board(props) {
                     bestResponse = responses[j]
                 }
             }
+            
             if (maxEval < minEval) {
                 minEval = maxEval;
                 bestMove = moves[i];
                 bestStateNew = tryMoveState;
                 bestStateNew[bestResponse[1] - 1] = bestStateNew[bestResponse[0] - 1];
                 bestStateNew[bestResponse[0] - 1] = " ";
-                console.log(bestStateNew);
+                bestState = bestStateNew;
             } else if (minEval === maxEval) {
+                bestStateNew = tryMoveState;
+                bestStateNew[bestResponse[1] - 1] = bestStateNew[bestResponse[0] - 1];
+                bestStateNew[bestResponse[0] - 1] = " ";
                 let evaluationOriginal = await predict(getFEN(bestState));
                 let evaluationNew = await predict(getFEN(bestStateNew));
+                if (evaluationOriginal < evaluationNew) { // if new is better for black
+                    bestMove = moves[i];
+                    bestState = bestStateNew;
+                    console.log("old eval: " + evaluationOriginal);
+                    console.log("new eval: " + evaluationNew);
+                }
             }
 
         }
