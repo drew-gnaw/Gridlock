@@ -13,6 +13,7 @@ import npng from "../assets/Bn.png"
 import rpng from "../assets/Br.png"
 import ppng from "../assets/Bp.png"
 import transparent from "../assets/transparent.png"
+import { min } from "lodash";
 
 export default function Board(props) {
     const pngMap = {
@@ -29,6 +30,22 @@ export default function Board(props) {
         "r": rpng,
         "p": ppng,
         " ": transparent
+    };
+
+    const valueMap = {
+        "K": 99,
+        "Q": 9,
+        "B": 3,
+        "N": 3,
+        "R": 5,
+        "P": 1,
+        "k": -99,
+        "q": -9,
+        "b": -3,
+        "n": -3,
+        "r": -5,
+        "p": -1,
+        " ": 0
     };
 
     const startingBoardStateStrings = ["r", "n", "b", "q", "k", "b", "n", "r",
@@ -106,6 +123,14 @@ export default function Board(props) {
             return 999;
         }
     };
+
+    const evalMaterial = (bdState) => {
+        let material = 0;
+        for (let i = 0; i < 64; i++) {
+            material += valueMap[bdState[i]];
+        }
+        return material;
+    }
     
     const strToPng = (s) => {
         return pngMap[s];
@@ -310,19 +335,19 @@ export default function Board(props) {
         }
     }
 
-    const findAllBlackMoves = () => {
+    const findAllBlackMoves = (bdState, white) => {
         let blkSquares = [];
         for (let i = 1; i <= 64; i++) {
-            if (containsColorPiece(i, false)) blkSquares.push(i);
+            if (containsColorPiece(i, white)) blkSquares.push(i);
         }
         let moves = []; // array of moves, where each move is a 2-long array (origin and target)
         for (let i = 0; i < blkSquares.length; i++) {
-            let blkMovesFromSq = getMoves(blkSquares[i], false, false);
+            let blkMovesFromSq = getMoves(blkSquares[i], white, false);
             for (let j = 0; j < blkMovesFromSq.length; j++) {
-                let tryMoveState = [...boardState];
+                let tryMoveState = [...bdState];
                 tryMoveState[blkMovesFromSq[j] - 1] = tryMoveState[blkSquares[i] - 1];
                 tryMoveState[blkSquares[i] - 1] = " ";
-                if (!inCheck(tryMoveState, false)) {
+                if (!inCheck(tryMoveState, white)) {
                     moves.push([blkSquares[i], blkMovesFromSq[j]]);
                 }
             }
@@ -372,8 +397,8 @@ export default function Board(props) {
         return null;
     }
 
-    const makeBlackMove = async () => {
-        let moves = findAllBlackMoves();
+    const makeBlackMoveML = async () => {
+        let moves = findAllBlackMoves(boardState, false);
         if (moves.length === 0) {
             console.log("its joever");
             return;
@@ -391,6 +416,55 @@ export default function Board(props) {
         }
         let bestMoveIndex = findMin(evals);
         let bestMove = moves[bestMoveIndex];
+        blackPerformMove(bestMove[0], bestMove[1]);
+        setWhiteCanPlay(true);
+    }
+
+    // function that plays a black move based on material miniaxing first, then ML FEN analysis to break ties.
+    const makeBlackMove = async () => {
+        let minEval = 99;
+        let bestMove = []; // origin, target
+        let bestState = [];
+        let bestStateNew = [];
+        let moves = findAllBlackMoves(boardState, false);
+        if (moves.length === 0) {
+            console.log("its joever");
+            return;
+        }
+        for (let i = 0; i < moves.length; i++) {
+            let maxEval = -99;
+            let bestResponse = [];
+            let tryMoveState = [...boardState];
+            let origin = moves[i][0];
+            let target = moves[i][1];
+            tryMoveState[target - 1] = tryMoveState[origin - 1];
+            tryMoveState[origin - 1] = " ";
+            let responses = findAllBlackMoves(tryMoveState, true);
+            for (let j = 0; j < responses.length; j++) {
+                let originR = responses[j][0];
+                let targetR = responses[j][1];
+                let tryResponseState = [... tryMoveState];
+                tryResponseState[targetR - 1] = tryResponseState[originR - 1];
+                tryResponseState[originR - 1] = " ";
+                let matEval = evalMaterial(tryResponseState);
+                if (matEval > maxEval) {
+                    maxEval = matEval;
+                    bestResponse = responses[j]
+                }
+            }
+            if (maxEval < minEval) {
+                minEval = maxEval;
+                bestMove = moves[i];
+                bestStateNew = tryMoveState;
+                bestStateNew[bestResponse[1] - 1] = bestStateNew[bestResponse[0] - 1];
+                bestStateNew[bestResponse[0] - 1] = " ";
+                console.log(bestStateNew);
+            } else if (minEval === maxEval) {
+                let evaluationOriginal = await predict(getFEN(bestState));
+                let evaluationNew = await predict(getFEN(bestStateNew));
+            }
+
+        }
         blackPerformMove(bestMove[0], bestMove[1]);
         setWhiteCanPlay(true);
     }
