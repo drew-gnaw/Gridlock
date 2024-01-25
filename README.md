@@ -1,6 +1,6 @@
 # Passantheon
 
-Welcome to the repository for Passantheon, a chess engine created using Create React App and TensorFlow.
+Welcome to the repository for Passantheon, a chess engine created using Create React App, Flask, and TensorFlow.
 
 ## Overview
 
@@ -20,15 +20,19 @@ These instructions will get you a copy of the project up and running on your loc
 - npm
 - TensorFlow
 
+### Usage
+
+Start the frontend server with ```npm run start```. This should run the React app on localhost:3000.
+
+To use the Neural Network, run the backend Flask API with \
+```export FLASK_APP=engine```\
+```flask run```. \
+The frontend communicates with this API to fetch the Neural Network's evaluations.
+
 ## Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
 ## Contact
 
-If you have any questions, please feel free to ask me for more details.
-
-## Acknowledgements
-
-- Create React App
-- TensorFlow
+If you have any questions, please feel free to ask me for more details. You can reach me at andrewzlwang@outlook.com
