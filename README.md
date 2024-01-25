@@ -1,10 +1,10 @@
-# EnPassantEngine
+# Passantheon
 
-Welcome to the repository for EnPassantEngine, a chess engine created using Create React App and TensorFlow.
+Welcome to the repository for Passantheon, a chess engine created using Create React App and TensorFlow.
 
 ## Overview
 
-EnPassantEngine is a chess engine that uses a combination of a minimax algorithm and a neural network to analyze possible board states as Forsyth-Edwards Notation (FENs). The neural network is built with TensorFlow and has been trained on 400,000 positions and validated on 10,000 positions. A unique characteristic of EnPassantEngine is its affinity for the en passant move in chess, adding a unique twist to its gameplay.
+Passantheon is a chess engine that uses a combination of a minimax algorithm and a neural network to analyze possible board states as Forsyth-Edwards Notation (FENs). The neural network is built with TensorFlow and has been trained on 400,000 positions and validated on 10,000 positions. A unique characteristic of EnPassantEngine is its affinity for the en passant move in chess, adding a unique twist to its gameplay.
 
 ## Getting Started
 
