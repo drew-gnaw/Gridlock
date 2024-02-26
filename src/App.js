@@ -48,7 +48,17 @@ function App() {
           <Accordion.Root className="AccordionRoot" type="single" defaultValue="item-1" collapsible>
             <Accordion.Item className="AccordionItem" value="item-1">
               <AccordionTrigger>What technologies did you use for this project?</AccordionTrigger>
-              <AccordionContent>I used Javascript</AccordionContent>
+              <AccordionContent>
+                I used Javascript and React to build the chessboard and frontend. The engine itself is a combination of a minimax algorithm and a 
+                TensorFlow Sequential model.
+              </AccordionContent>
+            </Accordion.Item>
+            <Accordion.Item className="AccordionItem" value="item-2">
+              <AccordionTrigger>How strong is the engine?</AccordionTrigger>
+              <AccordionContent>
+                As of now, the engine plays strongly favouring material advantage. The model is able to incorporate positional play into account. Overall,
+                the model would be rated around 600 ELO.
+              </AccordionContent>
             </Accordion.Item>
           </Accordion.Root>
       </Grid>
