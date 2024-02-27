@@ -7,7 +7,6 @@ import joblib
 app = Flask(__name__)
 CORS(app)
 
-#model = keras.models.load_model('./forest_model')
 model = keras.models.load_model('/Users/andrew/Repositories/chess/src/components/backend/model')
 
 @cross_origin()
